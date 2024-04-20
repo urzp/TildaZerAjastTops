@@ -34,12 +34,10 @@
         $(`${css_sel_zero_block} .t396__artboard`).css({'height':`${height_zero_block}px`})
     }
     
-    function list_tn_elem(css_selector_zero_block, width_point){
+    async function list_tn_elem(css_selector_zero_block, width_point){
         let list = []
-        let ajastTop = 0
         $(`${css_selector_zero_block} .tn-elem`).each(function(){
           let top = $(this).attr(`data-field-top-res-${width_point}-value`)
-          let newTop = top - ajastTop
           let diff_hieght = Number($(this).attr(`data-field-hight-res-${width_point}-value`)) - $(this).height()
           diff_hieght = !diff_hieght? 0: diff_hieght
            let el = {
@@ -47,13 +45,17 @@
             top,
             top_current:$(this).css('top'),
             diff_hieght,
-            ajastTop,
-            newTop, 
            }
-           ajastTop = ajastTop + diff_hieght
+           
            list.push(el)
         })
-        list.sort(sort_top)
+        await list.sort(sort_top)
+        let ajastTop = 0
+        list.forEach( (el)=>{
+            el.ajastTop = ajastTop 
+            el.newTop = el.top - ajastTop
+            ajastTop = ajastTop + el.diff_hieght
+        })
         //console.log(list)
         return list
     }
